@@ -503,9 +503,6 @@ def get_fundementals_for_dates(df, sf1_db_path, meta_data_path):
     result["pe_ratio"] = result["before_price"] / (
         result["net_income"] / result["sharesbas"]
     )
-    result["ps_ratio"] = result["before_price"] / (
-        result["revenue"] / result["sharesbas"]
-    )
     result["mc_before_date"] = result["sharesbas"] * result["before_price"]
     meta = pd.read_csv(f"{meta_data_path}", usecols=["ticker", "category"])
     meta.drop_duplicates(subset=["ticker"], inplace=True)
@@ -524,12 +521,12 @@ def create_top_and_bottom_deciles(file, top_decile_path, bottom_decile_path):
     ]
     limit_min = 200_000_000 * (1.03 ** (year - 2000))
     df = df[(df["mc_before_date"] > limit_min)]
-    df = df[df["ps_ratio"] > 0]
-    df = df.dropna(subset=["ps_ratio"])
-    df = df[~np.isinf(df["ps_ratio"])]
-    df = df[df["ps_ratio"] < df["ps_ratio"].quantile(0.99)]
+    df = df[df["pb_ratio"] > 0]
+    df = df.dropna(subset=["pb_ratio"])
+    df = df[~np.isinf(df["pb_ratio"])]
+    df = df[df["pb_ratio"] < df["pb_ratio"].quantile(0.99)]
 
-    df = df.sort_values(by=["buy_date", "ps_ratio"], ascending=[True, True])
+    df = df.sort_values(by=["buy_date", "pb_ratio"], ascending=[True, True])
     df_top_decile = df.groupby("buy_date", group_keys=False).apply(
         lambda x: x.head(len(x) // 10)
     )
