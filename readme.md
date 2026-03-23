@@ -178,6 +178,7 @@ value-factor-harvesting/
 duckdb
 pandas
 numpy
+scipy
 pandas_market_calendars
 python-dateutil
 ```
